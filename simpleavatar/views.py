@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
+from django.contrib import messages
 
 from forms import AvatarForm
 
@@ -14,8 +15,8 @@ def change(request, template_name='avatar/change.html', extra_context={}, next=N
         avatar_form = AvatarForm(request.POST, request.FILES, user=request.user)
         if  avatar_form.is_valid():
             avatar_form.save()
-            request.user.message_set.create(
-                message=_("Successfully updated your avatar."))
+            updated_message=_("Successfully updated your avatar.")
+            messages.add_message(request, messages.INFO, updated_message)
         return HttpResponseRedirect(request_get_next(request) or next)
     return render_to_response(
         template_name,
